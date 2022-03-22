@@ -4,8 +4,12 @@ body {
 
 h1 {
     text-align: center;
+    margin: 2rem;
+    font-family: 'Fredericka the Great', cursive;
+        font-size: 6rem;
 }
 
+/* form css */
 .form-wrapper {
     display: flex;
     flex-direction: row;
@@ -15,15 +19,64 @@ h1 {
     background-repeat: repeat-y;
     max-width: 600px;
     min-height: 132px;
-    padding-left: 6rem;
-    padding-right: 6rem;
-    padding-top: 1.5rem;
+    padding: 1.4rem 4rem 1rem 7rem;
 }
-
+.inputs-wrapper {
+    display: flex;
+    width: 100%;
+    justify-content:space-between;
+}
 .input-wrapper {
     display: flex;
     flex-direction: column;
+    margin-bottom: 0.4rem;
+    justify-content:end
 }
 .input-wrapper.task {
     width: 100%;
+}
+label {
+   padding-left: 0.5rem;
+   font-weight: 600;
+   color: #1307D2;
+}
+input {
+    background-color: #f6898318;
+    border: 2px solid #1307D2;
+    height: 2.2rem;
+}
+
+#btn {
+    height: 1.9rem;
+    padding: 0rem 1rem 0rem 1rem;
+    background-color: #F68883;
+    border-color: #F68883;
+    border: none;
+    margin-bottom: 0.17rem;
+}
+
+
+/* notes css */
+
+.tasks-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    /* justify-content: space-around; */
+}
+.note-wrapper {
+    margin: 2rem;
+    position: relative;
+    min-height: 250px;
+}
+.img-note {
+   position:absolute; 
+   z-index: 0;
+}
+.task-para {
+    position: relative;
+    top: 2rem;
+    left: 1rem;
+    max-width: 15ch;
+    max-height: 150px;
+    overflow: scroll;
 }
