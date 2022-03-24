@@ -16,10 +16,11 @@ h1 {
     flex-wrap: wrap;
     margin: auto;
     background-image: url(assets/formbg.jpg);
+    background-size: contain;
     background-repeat: repeat-y;
-    max-width: 600px;
-    min-height: 132px;
-    padding: 1.4rem 4rem 1rem 7rem;
+    max-width: 40rem;
+    /* min-height: 132px; */
+    padding: 1.6rem 4rem 1rem 7rem;
 }
 .inputs-wrapper {
     display: flex;
@@ -29,7 +30,7 @@ h1 {
 .input-wrapper {
     display: flex;
     flex-direction: column;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.7rem;
     justify-content:end
 }
 .input-wrapper.task {
@@ -54,6 +55,15 @@ input {
     border: none;
     margin-bottom: 0.17rem;
 }
+#rst {
+    height: 1.9rem;
+    padding: 0rem 1rem 0rem 1rem;
+    background-color: #f6898300;
+    border-color: #F68883;
+    border: none;
+    margin-bottom: 0.17rem;
+    text-decoration: underline;
+}
 
 
 /* notes css */
@@ -67,16 +77,46 @@ input {
     margin: 2rem;
     position: relative;
     min-height: 250px;
+    display: flex;
+    flex-direction: column;
 }
 .img-note {
-   position:absolute; 
+   position:relative; 
    z-index: 0;
 }
 .task-para {
-    position: relative;
-    top: 2rem;
+    position: absolute;
+    top: 2.5rem;
     left: 1rem;
     max-width: 15ch;
     max-height: 150px;
     overflow: scroll;
+}
+.bi {
+    visibility: hidden;
+    position: absolute;
+    z-index: 2;
+    left: 9.8rem;
+    top: 1.2rem;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.note-wrapper:hover > .bi {
+    visibility: visible;
+    opacity: 100;
+}
+
+.date-span {
+    position:absolute;
+    left: 1rem;
+    bottom: 2rem;
+    font-size: 14px;
+}
+.time-span {
+    position:absolute;
+    left: 1rem;
+    bottom: 0.8rem;
+    font-size: 12px;
 }
