@@ -24,17 +24,17 @@
         <div class="form-wrapper">
             <div class="input-wrapper task">
                 <label for="task-input" id="task-input-label">New Task</label>
-                <input type="text" id="task-input" required>
+                <input type="text" id="task-input" oninput="inputChanged(this)" required>
             </div>
             <div class="inputs-wrapper">
                 <div class="input-wrapper">
                     <label for="date-input" id="date-input-label">Due Date</label>
-                    <input type="date" id="date-input" required>
+                    <input type="date" id="date-input" oninput="inputChanged(this)" required>
                 </div>
                 <div class="input-wrapper">
 
                     <label for="time-input" id="time-input-label">Due time</label>
-                    <input type="time" id="time-input" required>
+                    <input type="time" id="time-input" oninput="inputChanged(this)" required>
                 </div>
                 <div class="input-wrapper">
                     <button id="btn" onclick="addTask()">Add Task</button>
@@ -43,6 +43,7 @@
                     <button id="rst" onclick="resetForm()">reset</button>
                 </div>
             </div>
+            <p id="error-message">efrgerg</p>
         </div>
         <div class="tasks-wrapper" id="tasks-wrapper">
         </div>

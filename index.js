@@ -1,3 +1,6 @@
+// ---- Form Values Manipulations ----
+
+// get the values from the user and return them
 function getInputsValues () {
     const taskInput = document.getElementById("task-input")
     const dateInput = document.getElementById("date-input")
@@ -10,20 +13,105 @@ function getInputsValues () {
     return formValues
 }
 
+// reset the values in the form - when submmit or reset click
+function resetForm() {
+    const taskInput = document.getElementById("task-input")
+    const dateInput = document.getElementById("date-input")
+    const timeInput = document.getElementById("time-input")
+    taskInput.value = ""
+    dateInput.value = ""
+    timeInput.value = ""
+    taskInput.style.borderColor = "#1307D2";
+    dateInput.style.borderColor = "#1307D2";
+    timeInput.style.borderColor = "#1307D2";
+    const errorElement = document.getElementById("error-message")
+    errorElement.style.visibility = "hidden"
+}
+
+// check if all requered inputs are fiiled and return wich is not
+function checkValid () {
+    const taskInput = document.getElementById("task-input")
+    const dateInput = document.getElementById("date-input")
+    const timeInput = document.getElementById("time-input")
+    let valid = []
+    if (taskInput.value == "") {
+        taskInput.style.borderColor = "red";
+        valid.push("task");
+    }
+    if (dateInput.value == "") {
+        dateInput.style.borderColor = "red";
+        valid.push("date");
+    }
+    if (timeInput.value == "") {
+        timeInput.style.borderColor = "red";
+        valid.push("time");
+    }
+    return valid
+}
+
+// takes the validation resault and display or hide the error message
+function errorMessage(valid) {
+    const errorElement = document.getElementById("error-message")
+    let message = "* Pleas fill in "
+    if (valid.length > 0) {  // if there is an error > handle the message
+        let i = 0
+        while (i < valid.length-1) {
+            message += `${valid[i]} `
+            i++
+        }
+        if (valid.length == 1) {
+            message += `a ${valid[i]} `
+        } else {
+        message += `and ${valid[i]}`
+        }
+        errorElement.innerText = message;
+        errorElement.style.visibility = "visible"
+    } else { // if there isn't an error > hide the message
+        errorElement.style.visibility = "hidden"
+    }
+}
+
+// on inputs changes > redefine the validation and error message
+function inputChanged(input) {
+    input.style.borderColor = "#1307D2";
+    const errorElement = document.getElementById("error-message")
+    if (errorElement.style.visibility == "visible") {
+        errorMessage(checkValid())
+    }
+}
+
+
+
+// ---- Local storage handeling ----
+
+// add the form values to local storage
 function addToLocalStorage() {
     taskListLocal = localStorage.getItem("taskList")
-    if (taskListLocal === null) {
+    if (taskListLocal === null) { // if there is nothing in local storage > defin it
         taskListLocal = [];
         taskListLocal.push(getInputsValues());
         localStorage.setItem("taskList" , JSON.stringify(taskListLocal));
-    } else {
-        console.log(taskListLocal.type)
+    } else { // if there is something in local storage > add to it the new values
         taskListLocal = JSON.parse(taskListLocal)
         taskListLocal.push(getInputsValues());
         localStorage.setItem("taskList" , JSON.stringify(taskListLocal))
     }
 }
 
+// delete from local storage
+function deleteFromLocal(index) { // gets the index value of the object that we need to delete from the delNote() function
+    taskListLocal = localStorage.getItem("taskList")
+    taskListLocal = JSON.parse(taskListLocal)
+    taskListLocal.splice(index, 1)
+    localStorage.setItem("taskList" , JSON.stringify(taskListLocal))
+}
+
+
+// ---- DOM manipulations ----
+
+// creates the task card component with values from:
+// if new > from form ( with the addTask() function)
+// if exist > from local storage (with the loadList() function)
 function createDomElement (noteItem) {
         // create task wrapper
     const noteWrapper = document.createElement('div')
@@ -35,6 +123,7 @@ function createDomElement (noteItem) {
     // create close button
     const closeBtn = document.createElement('i')
     closeBtn.setAttribute("class" , "bi bi-x-circle-fill")
+    closeBtn.setAttribute("onclick" , "delNote(this)")
     // create paragraph
     const paragraph = document.createElement('p')
     paragraph.setAttribute("class" , "task-para")
@@ -56,35 +145,53 @@ function createDomElement (noteItem) {
     return noteWrapper
 }
 
+// adds the new task component to the page
 function addDomElement(taskData) {
     const taskWrapper = document.getElementById("tasks-wrapper");
     noteElement = createDomElement(taskData)
     taskWrapper.appendChild(noteElement)
 }
 
-function resetForm() {
-    const taskInput = document.getElementById("task-input")
-    const dateInput = document.getElementById("date-input")
-    const timeInput = document.getElementById("time-input")
-    taskInput.value = ""
-    dateInput.value = ""
-    timeInput.value = ""
-}
-
-function addTask() {
-    const newTaskData = getInputsValues()
-    addToLocalStorage()
-    addDomElement(newTaskData)
-    resetForm()
-}
-
+// adds the exists tasks component to the page
 function loadList () {
     taskListLocal = localStorage.getItem("taskList")
     if (taskListLocal !== null) {
         taskListLocal = JSON.parse(taskListLocal)
         for (let obj of taskListLocal) {
-            // console.log(obj)
             addDomElement(obj)
         }
     }
 }
+
+// handle with new task submit
+function addTask() {
+    const newTaskData = getInputsValues()
+    const valid = checkValid ()
+    if (valid.length == 0) {
+        addToLocalStorage()
+        addDomElement(newTaskData)
+        resetForm()
+    } else {
+        errorMessage(valid)
+    }
+}
+
+// delete exist taskes
+function delNote(closeElement) {
+    const note = closeElement.parentElement //gets the parent div of the X icon
+    let noteIndex = note.previousSibling // gets the previous brother of that div for index finding next
+    note.remove() 
+    let index = 0;
+    while (noteIndex.previousSibling !== null) { // finds the index value of that task
+        noteIndex = noteIndex.previousSibling
+        index++
+    }
+    deleteFromLocal(index) // delete that task from local storage
+}
+
+
+
+
+
+
+
