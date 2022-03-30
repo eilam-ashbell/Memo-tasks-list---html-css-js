@@ -1,11 +1,12 @@
 // ---- Form Values Manipulations ----
 
 // get the values from the user and return them
-function getInputsValues () {
+function getInputsValues (id) {
     const taskInput = document.getElementById("task-input")
     const dateInput = document.getElementById("date-input")
     const timeInput = document.getElementById("time-input")
     const formValues = {
+        "id": id,
         "task": taskInput.value,
         "date": dateInput.value,
         "time": timeInput.value,
@@ -124,13 +125,14 @@ function checkDateValidation() {
 // add the form values to local storage
 function addToLocalStorage() {
     taskListLocal = localStorage.getItem("taskList")
-    if (taskListLocal === null) { // if there is nothing in local storage > defin it
+    if (taskListLocal === null || taskListLocal === '[]') { // if there is nothing in local storage > defin it
         taskListLocal = [];
-        taskListLocal.push(getInputsValues());
+        taskListLocal.push(getInputsValues(1));
         localStorage.setItem("taskList" , JSON.stringify(taskListLocal));
     } else { // if there is something in local storage > add to it the new values
         taskListLocal = JSON.parse(taskListLocal)
-        taskListLocal.push(getInputsValues());
+        const listLength = taskListLocal.length
+        taskListLocal.push(getInputsValues(taskListLocal[listLength-1].id+1));
         localStorage.setItem("taskList" , JSON.stringify(taskListLocal))
     }
 }
@@ -139,10 +141,10 @@ function addToLocalStorage() {
 function deleteFromLocal(index) { // gets the index value of the object that we need to delete from the delNote() function
     taskListLocal = localStorage.getItem("taskList")
     taskListLocal = JSON.parse(taskListLocal)
-    taskListLocal.splice(index, 1)
+    const indexToRemove = taskListLocal.indexOf(taskListLocal.find( ({ id }) => id == index )) // find the object with the right index (id)
+    taskListLocal.splice(indexToRemove, 1)
     localStorage.setItem("taskList" , JSON.stringify(taskListLocal))
 }
-
 
 // ---- DOM manipulations ----
 
@@ -153,6 +155,7 @@ function createDomElement (noteItem) {
         // create task wrapper
     const noteWrapper = document.createElement('div')
     noteWrapper.setAttribute("class", "note-wrapper")
+    noteWrapper.setAttribute("id", `id-${noteItem.id}`) //adds the index of the task to the id of the parent element
         // create img
     const img = document.createElement('img')
     img.setAttribute("class" , "img-note")
@@ -212,10 +215,11 @@ function loadList () {
 
 // handle with new task submit
 function addTask() {
-    const newTaskData = getInputsValues()
     const valid = checkValid ()
     if (valid.length == 0) {
         addToLocalStorage()
+        const listLength = taskListLocal.length
+        const newTaskData = getInputsValues(taskListLocal[listLength-1].id)
         if (isDateOver(newTaskData.date) === true) {
             addDomElement(newTaskData, true)
             alert(`Your new task due date is passed.\nCheck out your 'passed tasks' board to fined it`)
@@ -231,13 +235,9 @@ function addTask() {
 // delete exist taskes
 function delNote(closeElement) {
     const note = closeElement.parentElement //gets the parent div of the X icon
-    let noteIndex = note.previousSibling // gets the previous brother of that div for index finding next
+    const elementId = note.id // gets the id (index) of that element
+    const index = elementId.replace("id-", "") // extract the index from the id
     note.remove() 
-    let index = 0;
-    while (noteIndex.previousSibling !== null) { // finds the index value of that task
-        noteIndex = noteIndex.previousSibling
-        index++
-    }
     deleteFromLocal(index) // delete that task from local storage
 }
 

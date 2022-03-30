@@ -112,6 +112,10 @@ input {
     font-weight: 700;
 }
 
+#tasks-over-wrapper:empty {
+    display: none;
+}
+
 .img-note {
    position:relative; 
    z-index: 0;
