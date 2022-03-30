@@ -28,6 +28,7 @@ function resetForm() {
     errorElement.style.visibility = "hidden"
 }
 
+// ---- Validations ----
 // check if all requered inputs are fiiled and return wich is not
 function checkValid () {
     const taskInput = document.getElementById("task-input")
@@ -52,6 +53,7 @@ function checkValid () {
 // takes the validation resault and display or hide the error message
 function errorMessage(valid) {
     const errorElement = document.getElementById("error-message")
+    errorElement.style.color = "red"
     let message = "* Pleas fill in "
     if (valid.length > 0) {  // if there is an error > handle the message
         let i = 0
@@ -68,6 +70,7 @@ function errorMessage(valid) {
         errorElement.style.visibility = "visible"
     } else { // if there isn't an error > hide the message
         errorElement.style.visibility = "hidden"
+        checkDateValidation()
     }
 }
 
@@ -80,6 +83,40 @@ function inputChanged(input) {
     }
 }
 
+// date validation for task sorting
+function isDateOver(date) {
+    let today = new Date
+    // console.log(today.setHours(0,0,0,0))
+    let taskDate = date;
+    taskDate = Date.parse(taskDate)
+    // console.log(taskDate)
+    if (today.setHours(0,0,0,0) > taskDate) {
+        return true
+    } else {
+        return false
+    }
+
+}
+
+// check date input validation vs current date
+function checkDateValidation() {
+    const dateInput = document.getElementById("date-input")
+    const errorElement = document.getElementById("error-message")
+    const inputDate = new Date(dateInput.value)
+    const today = new Date
+    console.log('in')
+    if (inputDate.setHours(0,0,0,0) < today.setHours(0,0,0,0)) {
+        console.log('equal dates')
+        let message = "Note: you select a date that already passed "
+        errorElement.innerText = message;
+        errorElement.style.color = "orange"
+        dateInput.style.borderColor = "orange"
+        errorElement.style.visibility = "visible"
+    } else {
+        errorElement.style.visibility = "hidden"
+        dateInput.style.borderColor = "#1307D2"
+    }
+}
 
 
 // ---- Local storage handeling ----
@@ -131,7 +168,8 @@ function createDomElement (noteItem) {
     // create date span
     const dateSpan = document.createElement("span")
     dateSpan.setAttribute("class" , "date-span")
-    dateSpan.innerText= noteItem.date
+    let getDate = new Date(noteItem.date)
+    dateSpan.innerText= getDate.toLocaleDateString('he')
     // create time span
     const timeSpan = document.createElement("span")
     timeSpan.setAttribute("class" , "time-span")
@@ -146,10 +184,15 @@ function createDomElement (noteItem) {
 }
 
 // adds the new task component to the page
-function addDomElement(taskData) {
+function addDomElement(taskData, isDateOver) {
     const taskWrapper = document.getElementById("tasks-wrapper");
+    const taskOverWrapper = document.getElementById("tasks-over-wrapper");
     noteElement = createDomElement(taskData)
-    taskWrapper.appendChild(noteElement)
+    if (isDateOver === true) {
+        taskOverWrapper.appendChild(noteElement)
+    } else {
+        taskWrapper.appendChild(noteElement)
+    }
 }
 
 // adds the exists tasks component to the page
@@ -158,7 +201,11 @@ function loadList () {
     if (taskListLocal !== null) {
         taskListLocal = JSON.parse(taskListLocal)
         for (let obj of taskListLocal) {
-            addDomElement(obj)
+            if (isDateOver(obj.date) === true) {
+                addDomElement(obj, true)
+            } else {
+                addDomElement(obj, false)
+            }
         }
     }
 }
@@ -169,7 +216,12 @@ function addTask() {
     const valid = checkValid ()
     if (valid.length == 0) {
         addToLocalStorage()
-        addDomElement(newTaskData)
+        if (isDateOver(newTaskData.date) === true) {
+            addDomElement(newTaskData, true)
+            alert(`Your new task due date is passed.\nCheck out your 'passed tasks' board to fined it`)
+        } else {
+            addDomElement(newTaskData, false)
+        }
         resetForm()
     } else {
         errorMessage(valid)

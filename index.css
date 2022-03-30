@@ -1,5 +1,6 @@
 body {
     background-image: url(assets/tile.jpg);
+    padding-bottom: 5rem;
 }
 
 h1 {
@@ -76,7 +77,8 @@ input {
 .tasks-wrapper {
     display: flex;
     flex-wrap: wrap;
-    margin-top: 4rem;
+    min-height: 325px;
+    /* margin-top: 4rem; */
 }
 
 @keyframes append-note {
@@ -88,16 +90,26 @@ input {
 }
 
 .note-wrapper {
-    /* margin: auto; */
     position: relative;
     min-height: 250px;
     display: flex;
-    flex-grow: 0;
     flex-shrink: 0;
     flex-direction: column;
-    width: 20%;
-    min-width: 250px;
+    min-width: 256px;
     animation: append-note .3s linear;
+}
+
+#tasks-over-wrapper > .note-wrapper {
+    opacity: 0.6;
+    transition: opacity 200ms;
+}
+#tasks-over-wrapper > .note-wrapper:hover {
+    opacity: 1;
+}
+
+#tasks-over-wrapper > .note-wrapper > .date-span {
+    color: red;
+    font-weight: 700;
 }
 
 .img-note {
@@ -139,4 +151,9 @@ input {
     left: 1rem;
     bottom: 0.8rem;
     font-size: 12px;
+}
+.tasks-group-title {
+    margin-top: 4rem;
+    display: block;
+    border-bottom: 1px solid black;
 }
